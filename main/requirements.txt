@@ -1,0 +1,6 @@
+sentry-sdk
+google-cloud-firestore
+discord.py
+sanic
+cerberus
+
