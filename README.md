@@ -2,6 +2,10 @@
 Secure [Sentry](https://sentry.io/) webhook for [Discord](https://discord.com/) with user-level authorization running on top of US DoD maintained hardened container
 # Docs WIP
 WIP
+<br/><br/>
+Baby Yoda (Smokey) said, this is the way.
+<br/>
+And more, much more than this, I did it my way.
 ## Powered by
 ![alt text][USAF-logo]
 ![alt text][P1-logo]

@@ -17,4 +17,4 @@ RUN python -m pip install pyOpenSSL && \
 
 USER python3
 
-CMD ["python", "main.py", "dev"]
+CMD ["python", "main.py"]
