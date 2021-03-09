@@ -52,7 +52,7 @@ async def on_connect():
 @client.event
 async def on_ready():
     logger.info(f"sentry.bot running as {client.user.name} ({client.user.id}).\n------")
-    game = discord.Game("on the lookout for alerts")
+    game = discord.Game("!sentry -h")
     await client.change_presence(status=discord.Status.online, activity=game)
 
 @client.command(pass_context=True)
