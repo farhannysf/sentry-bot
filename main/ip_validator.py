@@ -37,7 +37,7 @@ def validate_ip(devState):
                         }
                     }
                 )
-                return json({"error": "Unauthorized IP"}, status=401)
+                return json({"error": "Unauthorized IP"}, status=403)
 
         return wrapper
 
