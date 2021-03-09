@@ -1,1 +1,2 @@
 unauthorized_channelMessage = "This channel is not authorized. Use `!sentry channel authorize` to authorize channels."
+glyph_URL = "https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/glyphs/sentry-wordmark-light-200x44.png"

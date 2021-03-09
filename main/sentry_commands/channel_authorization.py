@@ -1,4 +1,5 @@
 import re
+from settings import glyph_URL
 from utility import retrieveDB_data, checkChannel
 
 
@@ -55,9 +56,8 @@ async def channel_authorizationLogic(
         description="Authorize or revoke bot access to channels",
         color=0xE74C3C,
     )
-    embed.set_thumbnail(
-        url="https://cdn.iconscout.com/icon/free/png-512/sentry-2749339-2284729.png"
-    )  ## Placeholder glyph
+
+    embed.set_thumbnail(url=glyph_URL)
     embed.add_field(name="Usage", value=usageMessage)
     embed.add_field(name="Authorized Channels", value=f"{authorizedChannels}\n------")
 

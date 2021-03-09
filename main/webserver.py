@@ -1,4 +1,5 @@
 from datetime import datetime
+from settings import glyph_URL
 from httptools.parser.errors import HttpParserInvalidURLError as invalidURL
 from sanic import Sanic
 from sanic.log import logger as webLogger
@@ -135,9 +136,8 @@ async def sanic_webserver(devState, client, firestore, db, discordEmbed):
             embed.add_field(name="Message", value=f"`{message}`", inline=True)
             embed.add_field(name="URL", value=url, inline=True)
             embed.add_field(name="Timestamp (UTC)", value=f"`{utcTime}`", inline=True)
-            embed.set_thumbnail(
-                url="https://cdn.iconscout.com/icon/free/png-512/sentry-2749339-2284729.png"
-            )  ## Placeholder glyph
+            embed.set_thumbnail(url=glyph_URL)
+
             if mention:
                 discordMention = discordUser.mention
                 userVerify = await checkUser(db, firestore, str(mention), str(guildId))

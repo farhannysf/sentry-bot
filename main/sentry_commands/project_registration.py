@@ -1,5 +1,5 @@
 from utility import checkChannel, retrieveDB_data, checkUser
-from settings import unauthorized_channelMessage
+from settings import unauthorized_channelMessage, glyph_URL
 
 
 async def project_registrationLogic(
@@ -25,9 +25,8 @@ async def project_registrationLogic(
             description="Register a Sentry project to your Discord user ID and enable mention alert",
             color=0xE74C3C,
         )
-        embed.set_thumbnail(
-            url="https://cdn.iconscout.com/icon/free/png-512/sentry-2749339-2284729.png"
-        )  ## Placeholder glyph
+        
+        embed.set_thumbnail(url=glyph_URL)
         embed.add_field(name="Usage", value=usageMessage)
         embed.add_field(
             name="Registered Project", value=f"{registered_project}\n------"
