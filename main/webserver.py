@@ -164,6 +164,7 @@ async def sanic_webserver(devState, client, firestore, db, discordEmbed):
                             "project": existingProject,
                         }
                     }
+                    webLogger.error(errorLog)
                     return json(errorLog, status=401)
 
                 await discordChannel.send(discordMention, embed=embed)
