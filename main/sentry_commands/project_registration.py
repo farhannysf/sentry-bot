@@ -1,4 +1,5 @@
 from utility import checkChannel, retrieveDB_data, checkUser
+from settings import unauthorized_channelMessage
 
 
 async def project_registrationLogic(ctx, firestore, db, operation, project_name):
@@ -48,6 +49,4 @@ async def project_registrationLogic(ctx, firestore, db, operation, project_name)
         else:
             return await ctx.send(usageMessage)
     else:
-        return await ctx.send(
-            "This channel is not authorized. Use `!sentry channel authorize` to authorize channels."
-        )
+        return await ctx.send(unauthorized_channelMessage)

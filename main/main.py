@@ -12,6 +12,8 @@ from sentry_commands.project_registration import (
     project_registrationLogic as register_project,
 )
 
+from sentry_commands.sentry_help import commands_list
+
 from discord.ext import commands
 from google.cloud import firestore
 
@@ -53,6 +55,9 @@ async def on_ready():
     game = discord.Game("on the lookout for alerts")
     await client.change_presence(status=discord.Status.online, activity=game)
 
+@client.command(pass_context=True)
+async def h(ctx):
+    await commands_list(ctx, discord.Embed, db, firestore)
 
 @client.command(pass_context=True)
 @commands.has_permissions(manage_messages=True)

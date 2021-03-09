@@ -1,0 +1,1 @@
+unauthorized_channelMessage = "This channel is not authorized. Use `!sentry channel authorize` to authorize channels."
