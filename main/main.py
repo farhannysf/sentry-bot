@@ -62,7 +62,7 @@ async def h(ctx):
 @client.command(pass_context=True)
 @commands.has_permissions(manage_messages=True)
 async def channel(ctx, operation: str = None, channel: str = None):
-    await authorizeChannel(ctx, firestore, db, operation, channel)
+    await authorizeChannel(ctx, discord.Embed, firestore, db, operation, channel)
 
 
 @channel.error
@@ -78,7 +78,7 @@ async def channel_error(ctx, error):
 
 @client.command(pass_context=True)
 async def project(ctx, operation: str = None, project_name: str = None):
-    await register_project(ctx, firestore, db, operation, project_name)
+    await register_project(ctx, discord.Embed, firestore, db, operation, project_name)
 
 
 @project.error
