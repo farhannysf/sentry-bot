@@ -1,6 +1,21 @@
+import sys
 import unittest
 import time
 import requests
+from ipaddress import ip_address
+
+try:
+    ip = str(sys.argv[1])
+    print(f"testing at: {ip}")
+    try:
+        ip_address(ip)
+    except ValueError as e:
+        print(f"ERROR: {e}")
+        sys.exit()
+
+except IndexError:
+    print("Usage: tests.py ip")
+    sys.exit()
 
 
 def test_probe(resp, status_code, response):
@@ -12,6 +27,10 @@ def test_probe(resp, status_code, response):
 
 
 class Test(unittest.TestCase):
+    status_code_415 = 415
+    status_code_200 = 200
+    status_code_400 = 400
+    status_code_401 = 401
     probeResponse = {"error": "Access Forbidden"}
     emptyBody_response = {
         "error": {
@@ -74,11 +93,31 @@ class Test(unittest.TestCase):
         }
     }
 
+    if ip != "0.0.0.0":
+        status_code_200 = status_code_415 = status_code_400 = status_code_401 = 403
+        emptyBody_response = (
+            emptyJson_response
+        ) = (
+            success_response
+        ) = (
+            channel_unauthorized_response
+        ) = (
+            channel_invalid_response
+        ) = (
+            invalid_user_response
+        ) = (
+            string_mention_id_response
+        ) = (
+            string_channel_id_response
+        ) = existing_project_response = unregistered_user_response = {
+            "error": "Unauthorized IP"
+        }
+
     def test_get_invalidMethod_1(self):
         print("\nTesting invalid method GET to undefined route / ")
         self.assertEqual(
             test_probe(
-                requests.get("https://0.0.0.0:8080/", verify=False),
+                requests.get(f"https://{ip}:8080/", verify=False),
                 400,
                 self.probeResponse,
             ),
@@ -89,7 +128,7 @@ class Test(unittest.TestCase):
         print("\nTesting invalid method GET to undefined route /hello ")
         self.assertEqual(
             test_probe(
-                requests.get("https://0.0.0.0:8080/hello", verify=False),
+                requests.get(f"https://{ip}:8080/hello", verify=False),
                 400,
                 self.probeResponse,
             ),
@@ -100,7 +139,7 @@ class Test(unittest.TestCase):
         print("\nTesting invalid method GET to valid endpoint")
         self.assertEqual(
             test_probe(
-                requests.get("https://0.0.0.0:8080/sentry-bot/channel?", verify=False),
+                requests.get(f"https://{ip}:8080/sentry-bot/channel?", verify=False),
                 400,
                 self.probeResponse,
             ),
@@ -112,7 +151,7 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.get(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=1&mention=1",
+                    f"https://{ip}:8080/sentry-bot/channel?id=1&mention=1",
                     verify=False,
                 ),
                 400,
@@ -125,7 +164,7 @@ class Test(unittest.TestCase):
         print("\nTesting valid method POST to undefined route / ")
         self.assertEqual(
             test_probe(
-                requests.post("https://0.0.0.0:8080/", verify=False),
+                requests.post(f"https://{ip}:8080/", verify=False),
                 400,
                 self.probeResponse,
             ),
@@ -136,7 +175,7 @@ class Test(unittest.TestCase):
         print("\nTesting valid method POST to undefined route /hello ")
         self.assertEqual(
             test_probe(
-                requests.post("https://0.0.0.0:8080/hello", verify=False),
+                requests.post(f"https://{ip}:8080/hello", verify=False),
                 400,
                 self.probeResponse,
             ),
@@ -150,10 +189,10 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=1&mention=1",
+                    f"https://{ip}:8080/sentry-bot/channel?id=1&mention=1",
                     verify=False,
                 ),
-                415,
+                self.status_code_415,
                 self.emptyBody_response,
             ),
             True,
@@ -166,11 +205,11 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=1&mention=1",
+                    f"https://{ip}:8080/sentry-bot/channel?id=1&mention=1",
                     json={},
                     verify=False,
                 ),
-                400,
+                self.status_code_400,
                 self.emptyJson_response,
             ),
             True,
@@ -183,11 +222,11 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=1&mention=1",
+                    f"https://{ip}:8080/sentry-bot/channel?id=1&mention=1",
                     json={"hello": "world"},
                     verify=False,
                 ),
-                400,
+                self.status_code_400,
                 self.emptyJson_response,
             ),
             True,
@@ -200,11 +239,11 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=582329068469616655&mention=179182605038518273",
+                    f"https://{ip}:8080/sentry-bot/channel?id=582329068469616655&mention=179182605038518273",
                     json=self.validJson_request,
                     verify=False,
                 ),
-                200,
+                self.status_code_200,
                 self.success_response,
             ),
             True,
@@ -217,11 +256,11 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=582329068469616655",
+                    f"https://{ip}:8080/sentry-bot/channel?id=582329068469616655",
                     json=self.validJson_request,
                     verify=False,
                 ),
-                200,
+                self.status_code_200,
                 self.success_response,
             ),
             True,
@@ -235,11 +274,11 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=582329068469616655&mention=179182605038518273",
+                    f"https://{ip}:8080/sentry-bot/channel?id=582329068469616655&mention=179182605038518273",
                     json=self.validJson_request,
                     verify=False,
                 ),
-                200,
+                self.status_code_200,
                 self.success_response,
             ),
             True,
@@ -252,11 +291,11 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=234515384919654400&mention=179182605038518273",
+                    f"https://{ip}:8080/sentry-bot/channel?id=234515384919654400&mention=179182605038518273",
                     json=self.validJson_request,
                     verify=False,
                 ),
-                401,
+                self.status_code_401,
                 self.channel_unauthorized_response,
             ),
             True,
@@ -269,11 +308,11 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=1&mention=179182605038518273",
+                    f"https://{ip}:8080/sentry-bot/channel?id=1&mention=179182605038518273",
                     json=self.validJson_request,
                     verify=False,
                 ),
-                401,
+                self.status_code_401,
                 self.channel_invalid_response,
             ),
             True,
@@ -286,11 +325,11 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=582329068469616655&mention=1",
+                    f"https://{ip}:8080/sentry-bot/channel?id=582329068469616655&mention=1",
                     json=self.validJson_request,
                     verify=False,
                 ),
-                401,
+                self.status_code_401,
                 self.invalid_user_response,
             ),
             True,
@@ -303,11 +342,11 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=582329068469616655&mention=abc",
+                    f"https://{ip}:8080/sentry-bot/channel?id=582329068469616655&mention=abc",
                     json=self.validJson_request,
                     verify=False,
                 ),
-                400,
+                self.status_code_400,
                 self.string_mention_id_response,
             ),
             True,
@@ -320,11 +359,11 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=abc&mention=abc",
+                    f"https://{ip}:8080/sentry-bot/channel?id=abc&mention=abc",
                     json=self.validJson_request,
                     verify=False,
                 ),
-                400,
+                self.status_code_400,
                 self.string_channel_id_response,
             ),
             True,
@@ -337,11 +376,11 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=582329068469616655&mention=253519680919044096",
+                    f"https://{ip}:8080/sentry-bot/channel?id=582329068469616655&mention=253519680919044096",
                     json=self.validJson_request,
                     verify=False,
                 ),
-                401,
+                self.status_code_401,
                 self.existing_project_response,
             ),
             True,
@@ -354,11 +393,11 @@ class Test(unittest.TestCase):
         self.assertEqual(
             test_probe(
                 requests.post(
-                    "https://0.0.0.0:8080/sentry-bot/channel?id=582329068469616655&mention=234513470035460096",
+                    f"https://{ip}:8080/sentry-bot/channel?id=582329068469616655&mention=234513470035460096",
                     json=self.validJson_request,
                     verify=False,
                 ),
-                401,
+                self.status_code_401,
                 self.unregistered_user_response,
             ),
             True,
@@ -366,4 +405,4 @@ class Test(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(argv=['', '-v'])
