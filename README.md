@@ -9,10 +9,10 @@ And more, much more than this, I did it my way.
 [![add-button](https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/add-button.png)](https://discord.com/oauth2/authorize?client_id=814237855571902525&scope=bot)
 
 # Background
-I was inspired to create this project after witnessing many unhandled exception occurence on my colleague's web app for his Computer Science Bachelor thesis project.
+I was inspired to create this project after witnessing many unhandled exception occurrences on my colleague's web app for his Computer Science Bachelor thesis project.
 My colleague and I also experienced few crashes on our other web app project already in production environment, which I did not notice right away during the time of incident and took a considerable delay in time until I become aware of it. 
 I asked my other colleague if Sentry can post webhook alert to Discord but it turned out that there is no native Discord integration available yet.
-The existing method is to use Slack integration modified to use Discord webhook endpoint, which is ugly, unformatted and requires paid Team billing plans. 
+The existing method is to use Slack integration modified to use Discord webhook endpoint, which is ugly, insecure, unformatted and requires paid Team billing plans. 
 Then, I decided that it is in the best interest of good software engineering principle to create and democratize the means to get notified of software errors in real-time and collaboratively in a more accessible way to enable quality Agile development and deliver fix faster than ever.
 
 Moreover, I hope that this app would be adopted by US Air Force Gaming community and every other agencies across DoD informally in respect to #AccelerateChange directive through bolstering Cuture Change in adopting collaborative Agile approach to software engineering, which I believe would be more effective
@@ -25,21 +25,30 @@ This app also inherits the base image policy from P1 which is Free and Open Sour
 # App Description
 Most of this app components were reused and improved from my other project: [apx-bot](https://github.com/farhannysf/apx_bot).
 
-This is a cloud-native, stateless microservice app using python38 DoD Hardened Container (DHC) as the base image and pulled from Platform One registry at build time with Docker.
-DHC is an OCI-compliant image that is secured and made compliant with the DoD Hardened Containers Cybersecurity Requirements.
+This is a cloud-native, stateless python microservice web app using python38 DoD Hardened Container (DHC) as the base image and pulled from [Platform One](https://p1.dso.mil/) registry at build time with [Docker](https://www.docker.com/).
+DHC is an OCI-compliant image that is secured and made compliant with the DoD Hardened Containers Cybersecurity Requirements and maintained by The DoD Container Hardening Team, which is composed of DevSecOps Engineers and other container experts that have knowledge of the product being hardened. 
+They also have an understanding of DISA Security Requirements Guide (SRG) and Security Technical Implementation Guide (STIG) information. 
 
 This app is running a Discord bot client that forwards Sentry webhook requests to authorized Discord channels as a real-time alert with optional mention support to the authorized Discord user. 
-Discord channel can be authorized through invoking bot command by user with a sufficient permission in the respective Discord server. 
-To authorize and enable the optional mention support, Sentry project must be registered first by the respective user through invoking bot command.
+Discord channel can be authorized through invoking [bot command](#sentry-channel) by user with a sufficient permission in the respective Discord server. 
+To authorize and enable the optional mention support, Sentry project must be registered first by the respective user through invoking [bot command](#sentry-project).
 
-It is using Sanic web framework to run asynchronous web server for better scalability and performance in forwarding Sentry webhook requests on top of asynchronous Discord.py client event loop. 
-This app is using TLS connection but does not rely on Nginx reverse proxy that forwards all HTTPS requests to an HTTP sanic backend in order to make this app as self-contained as possible and to ensure maximum portability in deployment without having to reconfigure existing Nginx configuration, if any. 
+It is using [Sanic web framework](#external-libraries) to run asynchronous web server for better scalability and performance in forwarding Sentry webhook requests on top of asynchronous [Discord.py](#external-libraries) client event loop. 
+This app is using TLS connection but does not rely on Nginx reverse proxy that forwards all HTTPS requests to an HTTP Sanic backend in order to make this app as self-contained as possible and to ensure maximum portability in deployment without having to reconfigure existing Nginx configuration, if any. 
 Instead, deliberate design decision was made to use self-signed TLS certificate generated at build time solely for the purpose of leveraging TLS traffic encryption.
-This certificate is not signed by CA and will not pass strict TLS validation from clients outside the scope of this app. 
+This certificate is not signed by CA and will not pass strict TLS validation from clients outside the scope of this app.
 
-Google Cloud Firestore is used as a serverless noSQL database with ACID transactions to resiliently store channel, project registration and API keys configuration variables.
 
-There are two available runtime modes, each accomodates for production and development purpose.
+IP validation is implemented on the endpoint utilising decorator to whitelist Sentry.io outbound IP addresses on production runtime mode and prevent unauthorized request while it is possible to pass any IP address on development runtime mode for testing purpose.
+Input validation is implemented on the endpoint against both query string parameters and JSON schema with decorator utilising [Cerberus](#external-libraries) to ensure that only properly formed data is entering the workflow. 
+Moreover, strict exception handling is implemented for every integer conversions on request data after passing endpoint input validation. 
+Logging is used extensively on the endpoint with every invalid requests being contextually logged. Integration with [Sentry](#external-libraries) enables capability of live endpoint cyber threat monitoring through Discord for proactive attack detection. 
+Respectively, all unhandled exception occurences on Discord commands are also being contextually logged.
+These security measures were made to be compliant to [OWASP](https://owasp.org/) best practices.
+
+[Google Cloud Firestore](#external-libraries) is used as a serverless noSQL database with ACID transactions to resiliently store channels, project registrations and API keys configuration variables.
+
+There are two available built-in runtime modes, each accomodates for development and production purpose. This is designed to keep environments across the application lifecycle as similar as possible and maximize dev/prod parity.
 
 # Features and Usage
 ## Quick Start
@@ -156,7 +165,7 @@ Description: `Discord user ID registered to this project`
 Example: `https://178.62.3.61:8080/sentry-bot/channel?id=819187565546176513&mention=814237855571902525`
 
 
-# External Libraries used
+# External Libraries
 * [google-cloud-firestore](https://cloud.google.com/firestore/docs/quickstart-servers)
 * [sentry-sdk](https://docs.sentry.io/error-reporting/quickstart/?platform=python)
 * [discord.py](https://discordpy.readthedocs.io/en/latest/)
