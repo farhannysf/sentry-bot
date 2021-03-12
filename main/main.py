@@ -45,19 +45,23 @@ client = commands.Bot(command_prefix="!sentry ")
 @client.event
 async def on_connect():
     client.loop.create_task(
-        webserver.sanic_webserver(devState, client, firestore, db, discord.Embed)
+        webserver.sanic_webserver(
+            sys.exit, devState, client, firestore, db, discord.Embed
+        )
     )
 
 
 @client.event
 async def on_ready():
-    logger.info(f"sentry.bot running as {client.user.name} ({client.user.id}).\n------")
+    logger.info(f"Sentry Bot running as {client.user.name} ({client.user.id}).\n------")
     game = discord.Game("!sentry h")
     await client.change_presence(status=discord.Status.online, activity=game)
+
 
 @client.command(pass_context=True)
 async def h(ctx):
     await commands_list(ctx, discord.Embed, db, firestore)
+
 
 @client.command(pass_context=True)
 @commands.has_permissions(manage_messages=True)

@@ -6,7 +6,6 @@ from sanic.log import logger as webLogger
 from sanic.exceptions import NotFound as error404
 from sanic.exceptions import MethodNotSupported as invalidMethod
 from sanic.response import json
-from discord import File
 from discord.errors import NotFound
 from ip_validator import validate_ip
 from request_validator import validate_args, validate_json
@@ -18,7 +17,7 @@ ssl = {"cert": f"{cn}-{currentDate}.crt", "key": f"{cn}-{currentDate}.key"}
 webLogger.info(ssl)
 
 # Initialize Sanic web server
-async def sanic_webserver(devState, client, firestore, db, discordEmbed):
+async def sanic_webserver(exit, devState, client, firestore, db, discordEmbed):
     app = Sanic(__name__)
 
     querystring_schema = {
@@ -176,11 +175,40 @@ async def sanic_webserver(devState, client, firestore, db, discordEmbed):
             return json(alertStatus)
 
         except Exception as e:
-            webLogger.error(e)
+            webLogger.error(
+                {
+                    "error": {
+                        "message": "An internal error have occurred while processing request",
+                        "error": e,
+                        "ip": request.ip,
+                        "url": request.url,
+                        "body": request.body,
+                    }
+                }
+            )
             return json(
-                {"error": {"message": "An internal error have occured:"}}, status=500
+                {"error": {"message": "An internal error have occurred:"}}, status=500
             )
 
-    return await app.create_server(
-        host="0.0.0.0", port=8080, return_asyncio_server=True, access_log=True, ssl=ssl
-    )
+    try:
+        return await app.create_server(
+            host="0.0.0.0",
+            port=8080,
+            return_asyncio_server=True,
+            access_log=True,
+            ssl=ssl,
+        )
+
+    except FileNotFoundError:
+        webLogger.error("TLS certificate expired: App rebuild is required")
+        exit()
+    except Exception as e:
+        webLogger.error(
+            {
+                "error": {
+                    "message": "Error during Sanic webserver initialization",
+                    "error": e,
+                }
+            }
+        )
+        exit()
