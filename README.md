@@ -12,8 +12,8 @@ And more, much more than this, I did it my way.
 I was inspired to create this project after witnessing many unhandled exception occurence on my colleague's web app for his Computer Science Bachelor thesis project.
 My colleague and I also experienced few crashes on our other web app project already in production environment, which I did not notice right away during the time of incident and took a considerable delay in time until I become aware of it. 
 I asked my other colleague if Sentry can post webhook alert to Discord but it turned out that there is no native Discord integration available yet.
-The existing method is using Slack integration modified to use Discord webhook endpoint, which is ugly, unformatted and requires paid Team billing plans. 
-Then, I decided that it is in the best interest of good software engineering principle to create and democratize the mean to get notified of software errors in real-time and collaboratively in a more accessible way to enable quality Agile development and deliver fix faster than ever.
+The existing method is to use Slack integration modified to use Discord webhook endpoint, which is ugly, unformatted and requires paid Team billing plans. 
+Then, I decided that it is in the best interest of good software engineering principle to create and democratize the means to get notified of software errors in real-time and collaboratively in a more accessible way to enable quality Agile development and deliver fix faster than ever.
 
 Moreover, I hope that this app would be adopted by US Air Force Gaming community and every other agencies across DoD informally in respect to #AccelerateChange directive through bolstering Cuture Change in adopting collaborative Agile approach to software engineering, which I believe would be more effective
 if you also do it outside the professional domain in your spare time. For example, this is great for personal projects or hobbies which you can easily integrate to your informal Discord gaming channel community and collaborate with your peers without having to pay for Sentry Team billing plans or having to use your organization account. 
@@ -21,6 +21,25 @@ if you also do it outside the professional domain in your spare time. For exampl
 Baby Yoda (Smokey) can only show you the Way. To follow the Way, you must become the Way.
 
 This app also inherits the base image policy from P1 which is Free and Open Source Software.
+
+# App Description
+Most of this app components were reused and improved from my other project: [apx-bot](https://github.com/farhannysf/apx_bot).
+
+This is a cloud-native, stateless microservice app using python38 DoD Hardened Container (DHC) as the base image and pulled from Platform One registry at build time with Docker.
+DHC is an OCI-compliant image that is secured and made compliant with the DoD Hardened Containers Cybersecurity Requirements.
+
+This app is running a Discord bot client that forwards Sentry webhook requests to authorized Discord channels as a real-time alert with optional mention support to the authorized Discord user. 
+Discord channel can be authorized through invoking bot command by user with a sufficient permission in the respective Discord server. 
+To authorize and enable the optional mention support, Sentry project must be registered first by the respective user through invoking bot command.
+
+It is using Sanic web framework to run asynchronous web server for better scalability and performance in forwarding Sentry webhook requests on top of asynchronous Discord.py client event loop. 
+This app is using TLS connection but does not rely on Nginx reverse proxy that forwards all HTTPS requests to an HTTP sanic backend in order to make this app as self-contained as possible and to ensure maximum portability in deployment without having to reconfigure existing Nginx configuration, if any. 
+Instead, deliberate design decision was made to use self-signed TLS certificate generated at build time solely for the purpose of leveraging TLS traffic encryption.
+This certificate is not signed by CA and will not pass strict TLS validation from clients outside the scope of this app. 
+
+Google Cloud Firestore is used as a serverless noSQL database with ACID transactions to resiliently store channel, project registration and API keys configuration variables.
+
+There are two available runtime modes, each accomodates for production and development purpose.
 
 # Features and Usage
 ## Quick Start
@@ -46,7 +65,7 @@ replace `your-discord-channel-id` with your previously authorized Discord channe
 
 ([More info on API reference](#rest-api-reference))
 
-7. Click **Test Plugin** button on Sentry WebHooks configuration page and you will receive the test alert for your project on your authorized channel
+7. Click **"Test Plugin"** button on Sentry WebHooks configuration page and you will receive the test alert for your project on your authorized channel
 
 ![sentry-alert](https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/docs/sentry-alert.png)
 
