@@ -1,4 +1,4 @@
-# sentry-bot (Docs still WIP)
+# Sentry Bot
 Secure [Sentry](https://sentry.io/) webhook for [Discord](https://discord.com/) with user-level authorization running on top of US DoD maintained hardened container
 <br/><br/>
 Baby Yoda (Smokey) said, this is the way.
@@ -7,6 +7,28 @@ And more, much more than this, I did it my way.
 
 ###### Click the button below to add Sentry Bot to your Discord server
 [![add-button](https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/add-button.png)](https://discord.com/oauth2/authorize?client_id=814237855571902525&scope=bot)
+
+# Table of Contents
+1. [Background](#background)
+
+2. [App Description](#app-description)
+
+3. [Features and Usage](#features-and-usage)
+
+3.1 [Quick Start](#quick-start)
+
+3.2 [Enabling Mentions](#enabling-mention)
+
+3.3 [Bot Commands](#bot-commands)
+
+3.4 [How To Host Your Own](#how-to-host-your-own)
+
+4. [REST API Reference](#rest-api-reference)
+
+5. [External Libraries](#external-libraries)
+
+6. [Powered By](#powered-by)
+
 
 # Background
 I was inspired to create this project after witnessing many unhandled exception occurrences on my colleague's web app for his Computer Science Bachelor thesis project.
@@ -22,6 +44,7 @@ I believe it would be more effective if you also do it outside the professional 
 Baby Yoda (Smokey) can only show you the Way. To follow the Way, you must become the Way.
 
 This app also inherits the base image policy from P1 which is Free and Open Source Software.
+
 
 # App Description
 Most of this app components were reused and improved from my other project: [apx-bot](https://github.com/farhannysf/apx_bot).
@@ -50,6 +73,7 @@ These security measures were made to be compliant to [OWASP](https://owasp.org/)
 [Google Cloud Firestore](#external-libraries) is used as a serverless noSQL database with ACID transactions to resiliently store channels, project registrations and API keys configuration variables.
 
 There are two available built-in runtime modes, each accomodates for development and production purpose. This is designed to keep environments across the application lifecycle as similar as possible and maximize dev/prod parity.
+
 
 # Features and Usage
 ## Quick Start
@@ -89,6 +113,7 @@ replace `your-discord-channel-id` with your previously authorized Discord channe
 
 Further error messages from this Sentry project will be posted to this channel following the same format
 
+
 ## Enabling Mention
 
 1. On your authorized Discord channel, invoke `!sentry project register project-name-slug` command to register your Sentry project into your Discord user ID ([More Info](#sentry-project))
@@ -110,6 +135,7 @@ replace both `your-discord-channel-id` with your authorized Discord channel ID a
 ![sentry-mention-alert](https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/docs/sentry-mention-alert.png)
 
 Further error messages from this Sentry project will be posted to this channel following the same format
+
 
 ## Bot Commands
 ### !sentry h
@@ -143,6 +169,59 @@ Invoking this command with different project will overwrite your existing regist
 Revoke a registered Sentry project from your Discord user ID
 
 ![sentry-project-command](https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/docs/sentry-project-command.png)
+
+
+## How To Host Your Own
+1. Install docker-compose on your machine
+2. Git clone this repository
+3. Acquire your [Platform One](https://p1.dso.mil/#/) credentials
+4. [Follow this guide to create a Discord Bot account](https://discordpy.readthedocs.io/en/latest/discord.html). You should create two instances of these bots for development and production runtime.
+5. [Follow this guide to create a Google Cloud Platform project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
+6. [Go to Google Cloud Platform Firestore Console](https://console.cloud.google.com/firestore/) -> Click on **"Native Mode"** button
+7. Select a regional database location that you desire from the dropdown menu
+8. After database is initialized, click on **"Start Collection"** and input the following on the forms:
+
+Collection ID: `keys` 
+
+Document ID: `api` 
+
+Add 3 fields and with name `discordKey`, `discordKey_dev`, `sentryURL_dev`, `sentryURL_dev` and fill the values with your own Discord Bot secret tokens and [Sentry DSN](https://docs.sentry.io/product/sentry-basics/dsn-explainer/). 
+You should create two different Sentry DSNs for development and production runtime. Click **"SAVE"** once done
+
+
+![gcp-firestore-keys](https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/docs/gcp-firestore-keys.png)
+
+9. Click on **"Start Collection"** again and fill Collection ID with : `channel-list` leaving the Document ID and fields blank. Repeat this step and create `project-list` collection without Document ID and fields.
+
+You should end up with this configuration:
+
+![gcp-firestore-configuration](https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/docs/gcp-firestore-configuration.png)
+
+10. [Create a service account for your Google Cloud Platform Project following this guide](https://cloud.google.com/iam/docs/creating-managing-service-accounts) and grant service account access to project with role: `Firebase Rules System`
+11. [Create a service account key for your Google Cloud Platform Project following this guide](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) as JSON.
+12. Copy the downloaded service account key into sentry-bot `main/` directory
+13. On sentry-bot root directory where docker-compose.yml resides, create an `.env` file with the following content:
+
+```
+GOOGLE_APPLICATION_CREDENTIALS="Your-Private-Key-Filename.json"
+```
+11. Append Dockerfile on the following line:
+```
+CMD ["python", "main.py"]
+```
+to
+```
+CMD ["python", "main.py", "dev"]
+```
+and set development runtime mode
+
+14. Invoke `docker login` to https://registry1.dso.mil
+15. Change directory to sentry-bot root directory where build script resides, make it executable with `chmod +x build` and execute build script with `./build`
+16. Invoke `docker ps` to see the active Docker processes, take note of the container ID where sentry-bot is running and invoke `docker logs -f replace-with-your-container-id` to check sentry-bot standard output and make sure everything is running properly.
+17. If you want to run it in production runtime mode, remove `dev` argument from Dockerfile CMD. 
+* You need to rebuild the image daily because I designed Sanic web server to invalidate TLS certificate on daily basis.
+* Use CI/CD tools like Jenkins or CircleCI to orchestrate this. If you're doing so, it's better to use [HashiCorp's Vault](https://www.vaultproject.io/) service to manage your private key provisioning.
+
 
 # REST API Reference
 ## Endpoint path
