@@ -1,75 +1,48 @@
 import socket
+import random
 from OpenSSL import crypto
-import os
-import sys
 from datetime import datetime
 
-TYPE_RSA = crypto.TYPE_RSA
-TYPE_DSA = crypto.TYPE_DSA
+hostname = "exoduspi.com"
 currentDate = str(datetime.now().date())
 
-cn = "exoduspi.com"
-key = crypto.PKey()
-keypath = f"{cn}-{currentDate}.key"
-csrpath = f"{cn}-{currentDate}.csr"
-crtpath = f"{cn}-{currentDate}.crt"
+def gen_self_signed_cert():
+    pkey = crypto.PKey()
+    pkey.generate_key(crypto.TYPE_RSA, 4096)
 
+    x509 = crypto.X509()
+    subject = x509.get_subject()
+    subject.commonName = hostname
+    x509.set_issuer(subject)
+    x509.gmtime_adj_notBefore(0)
+    x509.gmtime_adj_notAfter(5*365*24*60*60)
+    x509.set_pubkey(pkey)
+    x509.set_serial_number(random.randrange(100000))
+    x509.set_version(2)
+    x509.add_extensions([
+        crypto.X509Extension(b'subjectAltName', False,
+            ','.join([
+                f'DNS:{hostname}',
+                f'DNS:*.{hostname}',
+                'DNS:localhost',
+                'DNS:*.localhost']).encode()),
+        crypto.X509Extension(b"basicConstraints", True, b"CA:false")])
 
-def generate_cert():
-    def generatekey():
-        print("Generating TLS key...")
-        key.generate_key(TYPE_RSA, 4096)
-        f = open(keypath, "wb")
-        f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, key))
-        f.close()
-        print("Success")
+    x509.sign(pkey, 'SHA256')
 
-    generatekey()
+    crtpath = f"{hostname}-{currentDate}.crt"
+    keypath = f"{hostname}-{currentDate}.key"
+    print("Creating TLS v1.3 Certificate ...")
+    f = open(crtpath, "wb")
+    f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, x509))
+    f.close()
+    print("Success")
+    print("Creating TLS v1.3 Private Key ...")
+    f = open(keypath, "wb")
+    f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, pkey))
+    f.close()
+    print("Success")
+    return
 
-    def generatecsr():
-        print("Generating TLS Certificate Request...")
-        c = "US"
-        st = "California"
-        l = "Berkeley"  # Go Bears
-        o = "CQB"
-        ou = "Network Operations"
-
-        req = crypto.X509Req()
-        req.get_subject().CN = cn
-        req.get_subject().C = c
-        req.get_subject().ST = st
-        req.get_subject().L = l
-        req.get_subject().O = o
-        req.get_subject().OU = ou
-        req.set_pubkey(key)
-        req.sign(key, "sha256")
-
-        f = open(csrpath, "wb")
-        f.write(crypto.dump_certificate_request(crypto.FILETYPE_PEM, req))
-        f.close()
-        print("Success")
-
-        print("Generating TLS Certificate...")
-        cert = crypto.X509()
-        cert.get_subject().CN = cn
-        cert.get_subject().C = c
-        cert.get_subject().ST = st
-        cert.get_subject().L = l
-        cert.get_subject().O = o
-        cert.get_subject().OU = ou
-        cert.set_serial_number(1000)
-        cert.gmtime_adj_notBefore(0)
-        cert.gmtime_adj_notAfter(315360000)
-        cert.set_issuer(cert.get_subject())
-        cert.set_pubkey(key)
-        cert.sign(key, "sha256")
-        f = open(crtpath, "wb")
-        f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
-        f.close()
-        print("Success")
-
-    generatecsr()
-
-
-if __name__ == "__main__":
-    generate_cert()
+if __name__ == '__main__':
+    gen_self_signed_cert()
