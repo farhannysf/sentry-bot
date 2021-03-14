@@ -281,14 +281,9 @@ Example: `https://178.62.3.61:8080/sentry-bot/channel?id=819187565546176513&ment
 ---
 
 # Powered By
-![USAF-logo][USAF-logo]
-![P1-logo][P1-logo]
-![DoD-logo][DoD-logo]
-![GCP-logo][GCP-logo]
-
-[USAF-logo]:https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/logos/USAF-logo.png
-[P1-logo]:https://p1.dso.mil/static/p1-meta-logo.png
-[DoD-logo]:https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/logos/DoD-logo.png
-[GCP-logo]:https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/logos/GCP-logo.png
+[![USAF-logo](https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/logos/USAF-logo.png)](https://www.af.mil/)
+[![P1-logo](https://p1.dso.mil/static/p1-meta-logo.png)](https://p1.dso.mil/)
+[![DoD-logo](https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/logos/DoD-logo.png)](https://www.defense.gov/)
+[![GCP-logo](https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/logos/GCP-logo.png)](https://cloud.google.com/)
 
 ---
