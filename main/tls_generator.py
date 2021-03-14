@@ -17,7 +17,7 @@ crtpath = f"{cn}-{currentDate}.crt"
 
 def generate_cert():
     def generatekey():
-        print("Generating SSL key...")
+        print("Generating TLS key...")
         key.generate_key(TYPE_RSA, 4096)
         f = open(keypath, "wb")
         f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, key))
@@ -27,7 +27,7 @@ def generate_cert():
     generatekey()
 
     def generatecsr():
-        print("Generating SSL Certificate Request...")
+        print("Generating TLS Certificate Request...")
         c = "US"
         st = "California"
         l = "Berkeley"  # Go Bears
@@ -49,7 +49,7 @@ def generate_cert():
         f.close()
         print("Success")
 
-        print("Generating SSL Certificate...")
+        print("Generating TLS Certificate...")
         cert = crypto.X509()
         cert.get_subject().CN = cn
         cert.get_subject().C = c

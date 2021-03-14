@@ -13,8 +13,8 @@ from utility import checkChannel, checkUser, check_existingProject
 
 cn = "exoduspi.com"
 currentDate = str(datetime.now().date())
-ssl = {"cert": f"{cn}-{currentDate}.crt", "key": f"{cn}-{currentDate}.key"}
-webLogger.info(ssl)
+tls = {"cert": f"{cn}-{currentDate}.crt", "key": f"{cn}-{currentDate}.key"}
+webLogger.info(tls)
 
 # Initialize Sanic web server
 async def sanic_webserver(exit, devState, client, firestore, db, discordEmbed):
@@ -196,7 +196,7 @@ async def sanic_webserver(exit, devState, client, firestore, db, discordEmbed):
             port=8080,
             return_asyncio_server=True,
             access_log=True,
-            ssl=ssl,
+            ssl=tls,
         )
 
     except FileNotFoundError:
