@@ -93,7 +93,7 @@ There are two available built-in runtime modes, each accomodates for development
 
 ![sentry-webhook](https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/docs/sentry-webhook.png)
 
-6. On the WebHooks configuration page, copy the following endpoint URL to the Callback URLs form: 
+6. On the WebHooks configuration page, copy the following endpoint query to the Callback URLs form: 
  
 `https://178.62.3.61:8080/sentry-bot/channel?id=your-discord-channel-id` 
 
@@ -241,7 +241,7 @@ and set development runtime mode
 17. Invoke `docker ps` to see the active Docker processes, take note of the container ID where sentry-bot is running and invoke `docker logs -f replace-with-your-container-id` to check sentry-bot standard output and make sure everything is running properly
 18. Change directory to `tests/` from sentry-bot root directory and run tests locally with `python tests.py 0.0.0.0` to ensure that everything is working properly
 19. If you want to run it in production runtime mode, remove `"dev"` argument from Dockerfile CMD
-20. Update your Sentry webhook configuration to use your host IP address on the callback URLs form.
+20. Update your Sentry webhook configuration to use your host IP address on the callback URLs form
 
 * You need to rebuild the image daily because I designed Sanic web server to invalidate existing TLS certificate on daily basis if app runtime is to be restarted
 * Use CI/CD tools like Jenkins or CircleCI to automate this orchestration. If you're doing so and you're hosting this app outside Google Cloud Platform, it's better to use [HashiCorp's Vault](https://www.vaultproject.io/) service to manage your private key provisioning and rotate your Google Cloud Platform Service Account private key periodically
