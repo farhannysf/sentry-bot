@@ -228,7 +228,7 @@ You should end up with this configuration:
 ```env
 GOOGLE_APPLICATION_CREDENTIALS="Your-Private-Key-Filename.json"
 ```
-14. On sentry-bot `/main` directory, append Dockerfile on the following line:
+14. On sentry-bot `main/` directory, append Dockerfile on the following line:
 ```dockerfile
 CMD ["python", "main.py"]
 ```
@@ -246,7 +246,7 @@ and set development runtime mode
 20. Update your Sentry webhook configuration to use your host IP address on the callback URLs form
 
 * You need to rebuild the image daily because I designed Sanic web server to invalidate existing TLS certificate on daily basis if app runtime is to be restarted
-* Use CI/CD tools like Jenkins or CircleCI to automate this orchestration. If you're doing so and you're hosting this app outside Google Cloud Platform, it's better to use [HashiCorp's Vault](https://www.vaultproject.io/) service to manage your private key provisioning and rotate your Google Cloud Platform Service Account private key periodically
+* Use CI/CD tools like [Jenkins](https://www.jenkins.io/) or [CircleCI](https://circleci.com/) to automate this orchestration. If you're doing so and you're hosting this app outside Google Cloud Platform, it's better to use [HashiCorp's Vault](https://www.vaultproject.io/) service to manage your private key provisioning and rotate your Google Cloud Platform Service Account private key periodically
 
 ---
 
