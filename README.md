@@ -192,7 +192,7 @@ Collection ID: `keys`
 
 Document ID: `api` 
 
-Add 3 fields and with the following name:
+Add 3 fields with the following name:
 
 `discordKey`
 
@@ -210,7 +210,7 @@ You should create two different Sentry DSNs for development and production runti
 
 ![gcp-firestore-keys](https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/docs/gcp-firestore-keys.png)
 
-9. Click on **"Start Collection"** again and fill Collection ID with : `channel-list` leaving the Document ID and fields blank. Repeat this step and create `project-list` collection without Document ID and fields.
+9. Click on **"Start Collection"** again and fill Collection ID with : `channel-list` leaving the Document ID and fields blank. Repeat this step and create `user-projects` collection without Document ID and fields.
 
 You should end up with this configuration:
 
@@ -226,7 +226,7 @@ You should end up with this configuration:
 ```env
 GOOGLE_APPLICATION_CREDENTIALS="Your-Private-Key-Filename.json"
 ```
-14. Append Dockerfile on the following line:
+14. On sentry-bot `/main` directory, append Dockerfile on the following line:
 ```dockerfile
 CMD ["python", "main.py"]
 ```
@@ -240,10 +240,11 @@ and set development runtime mode
 16. Change directory to sentry-bot root directory where build script resides, make it executable with `chmod +x build` and execute build script with `./build`
 17. Invoke `docker ps` to see the active Docker processes, take note of the container ID where sentry-bot is running and invoke `docker logs -f replace-with-your-container-id` to check sentry-bot standard output and make sure everything is running properly
 18. Change directory to `tests/` from sentry-bot root directory and run tests locally with `python tests.py 0.0.0.0` to ensure that everything is working properly
-19. If you want to run it in production runtime mode, remove `dev` argument from Dockerfile CMD 
+19. If you want to run it in production runtime mode, remove `"dev"` argument from Dockerfile CMD
+20. Update your Sentry webhook configuration to use your host IP address on the callback URLs form.
 
 * You need to rebuild the image daily because I designed Sanic web server to invalidate existing TLS certificate on daily basis if app runtime is to be restarted
-* Use CI/CD tools like Jenkins or CircleCI to orchestrate this. If you're doing so and you're hosting this app outside Google Cloud Platform, it's better to use [HashiCorp's Vault](https://www.vaultproject.io/) service to manage your private key provisioning and rotate your Google Cloud Platform Service Account private key periodically
+* Use CI/CD tools like Jenkins or CircleCI to automate this orchestration. If you're doing so and you're hosting this app outside Google Cloud Platform, it's better to use [HashiCorp's Vault](https://www.vaultproject.io/) service to manage your private key provisioning and rotate your Google Cloud Platform Service Account private key periodically
 
 ---
 
