@@ -194,7 +194,7 @@ Collection ID: `keys`
 
 Document ID: `api` 
 
-Add 3 fields with the following name:
+Add 4 fields with the following name:
 
 `discordKey`
 
