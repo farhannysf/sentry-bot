@@ -29,7 +29,9 @@ And more, much more than this, I did it my way.
 
 5. [External Libraries](#external-libraries)
 
-6. [Powered By](#powered-by)
+6. [License](#license)
+
+7. [Powered By](#powered-by)
 
 ---
 
@@ -279,6 +281,11 @@ Example: `https://178.62.3.61:8080/sentry-bot/channel?id=819187565546176513&ment
 * [discord.py](https://discordpy.readthedocs.io/en/latest/)
 * [sanic](https://sanic.readthedocs.io/en/latest/)
 * [cerberus](https://docs.python-cerberus.org/en/stable/)
+
+---
+
+# License
+Licensed under the [MIT License](https://github.com/farhannysf/sentry-bot/blob/main/LICENSE)
 
 ---
 
