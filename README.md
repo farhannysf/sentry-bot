@@ -286,9 +286,9 @@ Example: `https://178.62.3.61:8080/sentry-bot/channel?id=819187565546176513&ment
 ![DoD-logo][DoD-logo]
 ![GCP-logo][GCP-logo]
 
-[USAF-logo]:https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/US_Air_Force_Logo_-_Black_and_White_Version.svg/1280px-US_Air_Force_Logo_-_Black_and_White_Version.svg.png
+[USAF-logo]:https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/logos/USAF-logo.png
 [P1-logo]:https://p1.dso.mil/static/p1-meta-logo.png
-[DoD-logo]:https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/United_States_Department_of_Defense_Logo.svg/1920px-United_States_Department_of_Defense_Logo.svg.png
-[GCP-logo]:https://miro.medium.com/max/12516/1*CMz4r3-pEFp3Po6oHv-JxQ.png
+[DoD-logo]:https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/logos/DoD-logo.png
+[GCP-logo]:https://raw.githubusercontent.com/farhannysf/sentry-bot/main/assets/logos/GCP-logo.png
 
 ---
